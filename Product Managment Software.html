@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Part Management Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #cecece;
+        }
+
+        .fade-in-out {
+            font-size: 36px;
+            animation: fadeInOut 5s linear forwards;
+            display: none;
+            text-align: center;
+            position: fixed;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: "Times New Roman", Times, serif;
+            /* Set font to Times New Roman */
+        }
+
+        .team {
+            font-size: 24px;
+            animation: fadeInOut 5s linear forwards;
+            display: none;
+            text-align: center;
+            position: fixed;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: "Times New Roman", Times, serif;
+            /* Set font to Times New Roman */
+        }
+
+        @keyframes fadeInOut {
+            0%,
+            100% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        footer {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 14px;
+            color: rgb(0, 0, 0);
+        }
+
+        #login {
+            text-align: center;
+            margin-top: 50px;
+            /* Adjust margin as needed */
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 20px;
+            margin-top: 20px;
+            /* Adjust margin as needed */
+        }
+
+        .container>div {
+            flex: 0 1 45%;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="password"] {
+            width: calc(100% - 10px);
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px;
+            width: 100%;
+            background-color: #d32727;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #8d0000;
+        }
+
+        BackButton {
+            padding: 100px;
+            width: 100%;
+            background-color: #08ff77;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        BackButtonHover {
+            background-color: #00c043;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #cecece;
+        }
+
+        /* Style for folder options/access */
+        #folderOptions,
+        #scannerTool {
+            display: none;
+        }
+
+        /* Style for folder options/access button */
+        #folderOptionsBtn,
+        #scannerToolBtn,
+        .backBtn {
+            position: fixed;
+            bottom: 30px;
+            right: 10px;
+            padding: 10px;
+            width: 100px;
+            background-color: #000000;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .backBtn:hover {
+            background-color: #292929;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Part Management Tool</h1>
+    <div id="login">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Username"><br>
+        <input type="password" id="password" placeholder="Password"><br>
+        <button onclick="authenticate()">Login</button>
+    </div>
+    <div id="main" style="display: none;">
+        <div class="container">
+            <div>
+                <h2>Add Part</h2>
+                <input type="text" id="addName" placeholder="Name"><br>
+                <input type="number" id="addQuantity" placeholder="Quantity"><br>
+                <input type="number" id="addPrice" placeholder="Price"><br>
+                <button onclick="addPart()">Add Part</button>
+            </div>
+            <div>
+                <h2>Remove Part</h2>
+                <input type="number" id="removeId" placeholder="ID to Remove"><br>
+                <button onclick="removePart()">Remove Part</button>
+            </div>
+            <div>
+                <h2>Update Part</h2>
+                <input type="number" id="updateId" placeholder="ID to Update"><br>
+                <input type="number" id="updateQuantity" placeholder="New Quantity"><br>
+                <input type="number" id="updatePrice" placeholder="New Price"><br>
+                <button onclick="updatePart()">Update Part</button>
+            </div>
+            <div>
+                <h2>Search Part by Scanner ID</h2>
+                <input type="text" id="searchScannerID" placeholder="Scanner ID to Search"><br>
+                <button onclick="searchPartByScannerID()">Search Part</button>
+            </div>                      
+            <div>
+                <h2>Display All Parts</h2>
+                <button onclick="displayAllParts()">Display All Parts</button>
+                <div id="allParts"></div>
+            </div>
+        </div>
+        <button id="scannerToolBtn" onclick="openScannerTool()">Scanner Tool</button>
+    </div>
+    <div id="folderOptions">
+        <h2>Folder Options/Access</h2>
+        <!-- Add your folder options/access content here -->
+        <BackButton class="backBtn" onclick="goBack()">Back</BackButton>
+    </div>
+    <div id="scannerTool">
+        <h2>Scanner Tool</h2>
+        <input type="text" id="scannerName" placeholder="Name"><br>
+        <input type="number" id="scannerQuantity" placeholder="Quantity"><br>
+        <input type="number" id="scannerPrice" placeholder="Price"><br>
+        <input type="text" id="scannerID" placeholder="Scanner ID"><br> <!-- New input field for scanner ID -->
+        <button onclick="addPartFromScanner()">Add Part</button>
+        <BackButton class="backBtn" onclick="goBack()">Back</BackButton>
+    </div>    
+    <div class="fade-in-out">It's not Rocket Science, It's Rocket Robotics</div>
+    <div class="team">Team 3596</div>
+    <footer>F8 Productions</footer>
+    <audio id="soundEffect" src="C:\Users\Student\Downloads\myedit_ai_sfx_0321104612.mp3" preload="auto"></audio>
+    <script>
+        var rocketLaunched = false; // To track if rocket animation has been launched
+        var partsList = []; // Array to store added parts
+        // Load saved parts from local storage if available
+        var savedParts = localStorage.getItem("partsList");
+        if (savedParts) {
+            partsList = JSON.parse(savedParts);
+        }
+
+        function authenticate() {
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+
+            // You can replace this with your own authentication logic
+            if (username === "admin" && password === "password" && !rocketLaunched) {
+                document.getElementById("login").style.display = "none";
+                document.querySelector(".fade-in-out").style.display = "block"; // Show fade-in-out text
+                document.querySelector(".team").style.display = "block"; // Show team text
+
+                // Play sound effect
+                var sound = document.getElementById("soundEffect");
+                sound.currentTime = 0; // Rewind to the beginning
+                sound.play();
+
+                setTimeout(function () {
+                    document.getElementById("main").style.display = "block";
+                    document.querySelector(".fade-in-out").style.display = "none"; // Hide fade-in-out text
+                    document.querySelector(".team").style.display = "none"; // Hide team text
+                    rocketLaunched = true;
+                }, 5000); // 5 seconds delay
+            } else if (!rocketLaunched) {
+                var sound = document.getElementById("soundEffect");
+                sound.currentTime = 0; // Rewind to the beginning
+                alert("Invalid username or password. Please try again.");
+            }
+        }
+
+        
+
+        function addPart() {
+            var name = document.getElementById("addName").value;
+            var quantity = parseInt(document.getElementById("addQuantity").value);
+            var price = parseFloat(document.getElementById("addPrice").value);
+            var scannerID = parseFloat(document.getElementById("scannerID").value);
+
+            // Create a new part object
+            var newPart = {
+                id: partsList.length + 1, // ID based on array length
+                name: name,
+                quantity: quantity,
+                price: price,
+                scannerID: scannerID
+            };
+
+            // Add the new part to the parts list
+            partsList.push(newPart);
+
+            // Save parts list to local storage
+            savePartsToLocalStorage();
+
+            // Display success message
+            var confirmationMessage = "Part added successfully: Name: " + name + ", Quantity: " + quantity + ", Price: " + price;
+            alert(confirmationMessage);
+
+            // Clear input fields
+            document.getElementById("addName").value = "";
+            document.getElementById("addQuantity").value = "";
+            document.getElementById("addPrice").value = "";
+        }
+
+        function removePart() {
+            var id = parseInt(document.getElementById("removeId").value);
+
+            // Find index of the part with given ID
+            var index = partsList.findIndex(function (part) {
+                return part.id === id;
+            });
+
+            if (index !== -1) {
+                // Remove the part from the parts list
+                partsList.splice(index, 1);
+
+                // Save parts list to local storage
+                savePartsToLocalStorage();
+
+                alert("Part with ID " + id + " removed successfully.");
+            } else {
+                alert("Part with ID " + id + " not found.");
+            }
+        }
+
+        function updatePart() {
+            var id = parseInt(document.getElementById("updateId").value);
+            var newQuantity = parseInt(document.getElementById("updateQuantity").value);
+            var newPrice = parseFloat(document.getElementById("updatePrice").value);
+
+            // Find the part with the given ID
+            var partToUpdate = partsList.find(function (part) {
+                return part.id === id;
+            });
+
+            if (partToUpdate) {
+                // Update the part's quantity and price
+                partToUpdate.quantity = newQuantity;
+                partToUpdate.price = newPrice;
+
+                // Save updated parts list to local storage
+                savePartsToLocalStorage();
+
+                alert("Part with ID " + id + " updated successfully.");
+            } else {
+                alert("Part with ID " + id + " not found.");
+            }
+        }
+
+        function searchPart() {
+            var name = document.getElementById("searchName").value;
+
+            // Filter parts list based on search criteria
+            var searchResults = partsList.filter(function (part) {
+                return part.name.toLowerCase().includes(name.toLowerCase());
+            });
+
+            if (searchResults.length > 0) {
+                var table = "<table><tr><th>ID</th><th>Name</th><th>Quantity</th><th>Price</th><th>Scanner ID</th></tr>";
+                searchResults.forEach(function (part) {
+                    table += "<tr>";
+                    table += "<td>" + part.id + "</td>";
+                    table += "<td>" + part.name + "</td>";
+                    table += "<td>" + part.quantity + "</td>";
+                    table += "<td>" + part.price + "</td>";
+                    table += "<td>" + part.scannerID + "</td>";
+                    table += "</tr>";
+                });
+                table += "</table>";
+
+                document.getElementById("allParts").innerHTML = table;
+            } else {
+                alert("No parts found with the provided search criteria.");
+            }
+        }
+
+        function displayAllParts() {
+            var table = "<table><tr><th>ID</th><th>Name</th><th>Quantity</th><th>Price</th><th>Scanner ID</th></tr>";
+            partsList.forEach(function (part) {
+                table += "<tr>";
+                table += "<td>" + part.id + "</td>";
+                table += "<td>" + part.name + "</td>";
+                table += "<td>" + part.quantity + "</td>";
+                table += "<td>" + part.price + "</td>";
+                table += "<td>" + part.scannerID + "</td>";
+                table += "</tr>";
+            });
+            table += "</table>";
+        
+            document.getElementById("allParts").innerHTML = table;
+        
+            // Scroll to the element with id "allParts"
+            var allPartsElement = document.getElementById("allParts");
+            allPartsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Function to save parts list to local storage
+        function savePartsToLocalStorage() {
+            localStorage.setItem("partsList", JSON.stringify(partsList));
+        }
+
+        // Function to open folder options/access
+        function openFolderOptions() {
+            document.getElementById("main").style.display = "none"; // Hide main UI
+            document.getElementById("scannerTool").style.display = "none"; // Hide scanner tool UI
+            document.getElementById("folderOptions").style.display = "block"; // Show folder options/access UI
+        }
+
+        // Function to open scanner tool
+        function openScannerTool() {
+            document.getElementById("main").style.display = "none"; // Hide main UI
+            document.getElementById("folderOptions").style.display = "none"; // Hide folder options/access UI
+            document.getElementById("scannerTool").style.display = "block"; // Show scanner tool UI
+        }
+
+        // Function to go back to the main page
+        function goBack() {
+            document.getElementById("main").style.display = "block"; // Show main UI
+            document.getElementById("folderOptions").style.display = "none"; // Hide folder options/access UI
+            document.getElementById("scannerTool").style.display = "none"; // Hide scanner tool UI
+        }
+
+        function addPartFromScanner() {
+            var name = document.getElementById("scannerName").value;
+            var quantity = parseInt(document.getElementById("scannerQuantity").value);
+            var price = parseFloat(document.getElementById("scannerPrice").value);
+            var scannerID = document.getElementById("scannerID").value; // Get scanner ID
+        
+            // Create a new part object
+            var newPart = {
+                id: partsList.length + 1, // ID based on array length
+                name: name,
+                quantity: quantity,
+                price: price,
+                scannerID: scannerID // Save scanner ID
+            };
+        
+            // Add the new part to the parts list
+            partsList.push(newPart);
+        
+            // Save parts list to local storage
+            savePartsToLocalStorage();
+        
+            // Display success message
+            var confirmationMessage = "Part added successfully: Name: " + name + ", Quantity: " + quantity + ", Price: " + price + ", Scanner ID: " + scannerID;
+            alert(confirmationMessage);
+        
+            // Clear input fields
+            document.getElementById("scannerName").value = "";
+            document.getElementById("scannerQuantity").value = "";
+            document.getElementById("scannerPrice").value = "";
+            document.getElementById("scannerID").value = ""; // Clear scanner ID field
+        }
+        function searchPartByScannerID() {
+            var scannerID = document.getElementById("searchScannerID").value;
+        
+            // Find the part with the provided Scanner ID
+            var foundPart = partsList.find(function (part) {
+                return part.scannerID == scannerID; // Remove toLowerCase() method
+            });
+        
+            if (foundPart) {
+                var table = "<table><tr><th>ID</th><th>Name</th><th>Quantity</th><th>Price</th><th>Scanner ID</th></tr>";
+                table += "<tr>";
+                table += "<td>" + foundPart.id + "</td>";
+                table += "<td>" + foundPart.name + "</td>";
+                table += "<td>" + foundPart.quantity + "</td>";
+                table += "<td>" + foundPart.price + "</td>";
+                table += "<td>" + foundPart.scannerID + "</td>";
+                table += "</tr>";
+                table += "</table>";
+        
+                document.getElementById("allParts").innerHTML = table;
+            } else {
+                alert("No part found with the provided scanner ID.");
+            }
+        }
+    </script>
+</body>
+
+</html>
