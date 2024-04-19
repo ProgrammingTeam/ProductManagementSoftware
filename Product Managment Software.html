@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +11,6 @@
             padding: 0;
             background-color: #cecece;
         }
-
         .fade-in-out {
             font-size: 36px;
             animation: fadeInOut 5s linear forwards;
@@ -25,7 +23,6 @@
             font-family: "Times New Roman", Times, serif;
             /* Set font to Times New Roman */
         }
-
         .team {
             font-size: 24px;
             animation: fadeInOut 5s linear forwards;
@@ -170,7 +167,8 @@
                 <input type="text" id="addName" placeholder="Name"><br>
                 <input type="number" id="addQuantity" placeholder="Quantity"><br>
                 <input type="number" id="addPrice" placeholder="Price"><br>
-                <button onclick="addPart()">Add Part</button>
+                <input type="text" id="addScannerID" placeholder="Scanner ID"><br> <!-- New input field for Scanner ID -->
+                <button onclick="addPart()">Add Part</button>                
             </div>
             <div>
                 <h2>Remove Part</h2>
@@ -204,11 +202,8 @@
     </div>
     <div id="scannerTool">
         <h2>Scanner Tool</h2>
-        <input type="text" id="scannerName" placeholder="Name"><br>
-        <input type="number" id="scannerQuantity" placeholder="Quantity"><br>
-        <input type="number" id="scannerPrice" placeholder="Price"><br>
-        <input type="text" id="scannerID" placeholder="Scanner ID"><br> <!-- New input field for scanner ID -->
-        <button onclick="addPartFromScanner()">Add Part</button>
+        <input type="text" id="updateScannerID" placeholder="Update Quantity with Scanner ID"><br> <!-- Changed ID and placeholder -->
+        <button onclick="updateQuantity()">Update Quantity</button> <!-- Added new button -->
         <BackButton class="backBtn" onclick="goBack()">Back</BackButton>
     </div>    
     <div class="fade-in-out">It's not Rocket Science, It's Rocket Robotics</div>
@@ -251,15 +246,13 @@
                 alert("Invalid username or password. Please try again.");
             }
         }
-
         
-
         function addPart() {
             var name = document.getElementById("addName").value;
             var quantity = parseInt(document.getElementById("addQuantity").value);
             var price = parseFloat(document.getElementById("addPrice").value);
-            var scannerID = parseFloat(document.getElementById("scannerID").value);
-
+            var scannerID = document.getElementById("addScannerID").value; // Get Scanner ID
+        
             // Create a new part object
             var newPart = {
                 id: partsList.length + 1, // ID based on array length
@@ -268,21 +261,22 @@
                 price: price,
                 scannerID: scannerID
             };
-
+        
             // Add the new part to the parts list
             partsList.push(newPart);
-
+        
             // Save parts list to local storage
             savePartsToLocalStorage();
-
+        
             // Display success message
-            var confirmationMessage = "Part added successfully: Name: " + name + ", Quantity: " + quantity + ", Price: " + price;
+            var confirmationMessage = "Part added successfully: Name: " + name + ", Quantity: " + quantity + ", Price: " + price + ", Scanner ID: " + scannerID;
             alert(confirmationMessage);
-
+        
             // Clear input fields
             document.getElementById("addName").value = "";
             document.getElementById("addQuantity").value = "";
             document.getElementById("addPrice").value = "";
+            document.getElementById("addScannerID").value = ""; // Clear Scanner ID field
         }
 
         function removePart() {
@@ -330,30 +324,28 @@
             }
         }
 
-        function searchPart() {
-            var name = document.getElementById("searchName").value;
+        function searchPartByScannerID() {
+            var scannerID = document.getElementById("searchScannerID").value;
 
-            // Filter parts list based on search criteria
-            var searchResults = partsList.filter(function (part) {
-                return part.name.toLowerCase().includes(name.toLowerCase());
+            // Find the part with the provided Scanner ID
+            var foundPart = partsList.find(function (part) {
+                return part.scannerID == scannerID; // Remove toLowerCase() method
             });
 
-            if (searchResults.length > 0) {
+            if (foundPart) {
                 var table = "<table><tr><th>ID</th><th>Name</th><th>Quantity</th><th>Price</th><th>Scanner ID</th></tr>";
-                searchResults.forEach(function (part) {
-                    table += "<tr>";
-                    table += "<td>" + part.id + "</td>";
-                    table += "<td>" + part.name + "</td>";
-                    table += "<td>" + part.quantity + "</td>";
-                    table += "<td>" + part.price + "</td>";
-                    table += "<td>" + part.scannerID + "</td>";
-                    table += "</tr>";
-                });
+                table += "<tr>";
+                table += "<td>" + foundPart.id + "</td>";
+                table += "<td>" + foundPart.name + "</td>";
+                table += "<td>" + foundPart.quantity + "</td>";
+                table += "<td>" + foundPart.price + "</td>";
+                table += "<td>" + foundPart.scannerID + "</td>";
+                table += "</tr>";
                 table += "</table>";
 
                 document.getElementById("allParts").innerHTML = table;
             } else {
-                alert("No parts found with the provided search criteria.");
+                alert("No part found with the provided scanner ID.");
             }
         }
 
@@ -369,9 +361,9 @@
                 table += "</tr>";
             });
             table += "</table>";
-        
+
             document.getElementById("allParts").innerHTML = table;
-        
+
             // Scroll to the element with id "allParts"
             var allPartsElement = document.getElementById("allParts");
             allPartsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -408,57 +400,71 @@
             var quantity = parseInt(document.getElementById("scannerQuantity").value);
             var price = parseFloat(document.getElementById("scannerPrice").value);
             var scannerID = document.getElementById("scannerID").value; // Get scanner ID
-        
+            var updateScannerID = document.getElementById("updateScannerID").value; // Get update scanner ID
+
+            // Check if the scanner ID is recognized
+            var foundPart = partsList.find(function (part) {
+                return part.scannerID === scannerID;
+            });
+
+            if (foundPart) {
+                // Increase quantity by one if recognized
+                quantity += 1;
+            } else {
+                // Automatically enter unrecognized scanner ID into the scanner ID field
+                document.getElementById("scannerID").value = updateScannerID;
+            }
+
             // Create a new part object
             var newPart = {
                 id: partsList.length + 1, // ID based on array length
                 name: name,
                 quantity: quantity,
                 price: price,
-                scannerID: scannerID // Save scanner ID
+                scannerID: scannerID
             };
-        
+
             // Add the new part to the parts list
             partsList.push(newPart);
-        
+
             // Save parts list to local storage
             savePartsToLocalStorage();
-        
+
+            // Automatically type update quantity in scanner ID field
+            document.getElementById("scannerID").value = quantity;
+
             // Display success message
             var confirmationMessage = "Part added successfully: Name: " + name + ", Quantity: " + quantity + ", Price: " + price + ", Scanner ID: " + scannerID;
             alert(confirmationMessage);
-        
+
             // Clear input fields
             document.getElementById("scannerName").value = "";
             document.getElementById("scannerQuantity").value = "";
             document.getElementById("scannerPrice").value = "";
             document.getElementById("scannerID").value = ""; // Clear scanner ID field
+            document.getElementById("updateScannerID").value = ""; // Clear update scanner ID field
         }
-        function searchPartByScannerID() {
-            var scannerID = document.getElementById("searchScannerID").value;
-        
+
+        function updateQuantity() {
+            var scannerID = document.getElementById("updateScannerID").value; // Get scanner ID
+
             // Find the part with the provided Scanner ID
-            var foundPart = partsList.find(function (part) {
-                return part.scannerID == scannerID; // Remove toLowerCase() method
+            var foundPartIndex = partsList.findIndex(function (part) {
+                return part.scannerID == scannerID;
             });
-        
-            if (foundPart) {
-                var table = "<table><tr><th>ID</th><th>Name</th><th>Quantity</th><th>Price</th><th>Scanner ID</th></tr>";
-                table += "<tr>";
-                table += "<td>" + foundPart.id + "</td>";
-                table += "<td>" + foundPart.name + "</td>";
-                table += "<td>" + foundPart.quantity + "</td>";
-                table += "<td>" + foundPart.price + "</td>";
-                table += "<td>" + foundPart.scannerID + "</td>";
-                table += "</tr>";
-                table += "</table>";
-        
-                document.getElementById("allParts").innerHTML = table;
+
+            if (foundPartIndex !== -1) {
+                // Increase quantity by one if recognized
+                partsList[foundPartIndex].quantity += 1;
+
+                // Save updated parts list to local storage
+                savePartsToLocalStorage();
+
+                alert("Quantity updated successfully for part with Scanner ID: " + scannerID);
             } else {
-                alert("No part found with the provided scanner ID.");
+                alert("No part found with the provided Scanner ID.");
             }
         }
     </script>
 </body>
-
 </html>
