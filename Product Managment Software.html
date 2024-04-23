@@ -247,15 +247,23 @@
             }
         }
         
+        function getNextId() {
+            let maxId = 0;
+            partsList.forEach(part => {
+                if (part.id > maxId) maxId = part.id;
+            });
+            return maxId + 1;
+        }
+        
         function addPart() {
             var name = document.getElementById("addName").value;
             var quantity = parseInt(document.getElementById("addQuantity").value);
             var price = parseFloat(document.getElementById("addPrice").value);
             var scannerID = document.getElementById("addScannerID").value; // Get Scanner ID
         
-            // Create a new part object
+            // Create a new part object with a unique ID
             var newPart = {
-                id: partsList.length + 1, // ID based on array length
+                id: getNextId(), // Get next unique ID
                 name: name,
                 quantity: quantity,
                 price: price,
@@ -278,55 +286,44 @@
             document.getElementById("addPrice").value = "";
             document.getElementById("addScannerID").value = ""; // Clear Scanner ID field
         }
-
+        
         function removePart() {
             var id = parseInt(document.getElementById("removeId").value);
-
             // Find index of the part with given ID
             var index = partsList.findIndex(function (part) {
                 return part.id === id;
             });
-
             if (index !== -1) {
                 // Remove the part from the parts list
                 partsList.splice(index, 1);
-
                 // Save parts list to local storage
                 savePartsToLocalStorage();
-
                 alert("Part with ID " + id + " removed successfully.");
             } else {
                 alert("Part with ID " + id + " not found.");
             }
         }
-
         function updatePart() {
             var id = parseInt(document.getElementById("updateId").value);
             var newQuantity = parseInt(document.getElementById("updateQuantity").value);
             var newPrice = parseFloat(document.getElementById("updatePrice").value);
-
             // Find the part with the given ID
             var partToUpdate = partsList.find(function (part) {
                 return part.id === id;
             });
-
             if (partToUpdate) {
                 // Update the part's quantity and price
                 partToUpdate.quantity = newQuantity;
                 partToUpdate.price = newPrice;
-
                 // Save updated parts list to local storage
                 savePartsToLocalStorage();
-
                 alert("Part with ID " + id + " updated successfully.");
             } else {
                 alert("Part with ID " + id + " not found.");
             }
         }
-
         function searchPartByScannerID() {
             var scannerID = document.getElementById("searchScannerID").value;
-
             // Find the part with the provided Scanner ID
             var foundPart = partsList.find(function (part) {
                 return part.scannerID == scannerID; // Remove toLowerCase() method
