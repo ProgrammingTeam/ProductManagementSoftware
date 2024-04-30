@@ -117,7 +117,7 @@
         th,
         td {
             border: 1px solid #dddddd;
-            text-align: left;
+            text-align: left; 
             padding: 8px;
         }
 
@@ -167,7 +167,8 @@
                 <input type="text" id="addName" placeholder="Name"><br>
                 <input type="number" id="addQuantity" placeholder="Quantity"><br>
                 <input type="number" id="addPrice" placeholder="Price"><br>
-                <input type="text" id="addScannerID" placeholder="Scanner ID"><br> <!-- New input field for Scanner ID -->
+                <input type="text" id="addScannerID" placeholder="Scanner ID"><br> 
+                <input type="text" id="addLocationID" placeholder="Current Location"><br>
                 <button onclick="addPart()">Add Part</button>                
             </div>
             <div>
@@ -180,8 +181,9 @@
                 <input type="number" id="updateId" placeholder="ID to Update"><br>
                 <input type="number" id="updateQuantity" placeholder="New Quantity"><br>
                 <input type="number" id="updatePrice" placeholder="New Price"><br>
+                <input type="text" id="updateLocationID" placeholder="New Location ID"><br> <!-- New field for location ID -->
                 <button onclick="updatePart()">Update Part</button>
-            </div>
+            </div>            
             <div>
                 <h2>Search Part by Scanner ID</h2>
                 <input type="text" id="searchScannerID" placeholder="Scanner ID to Search"><br>
@@ -259,15 +261,17 @@
             var name = document.getElementById("addName").value;
             var quantity = parseInt(document.getElementById("addQuantity").value);
             var price = parseFloat(document.getElementById("addPrice").value);
-            var scannerID = document.getElementById("addScannerID").value; // Get Scanner ID
+            var scannerID = document.getElementById("addScannerID").value;
+            var locationID = document.getElementById("addLocationID").value; // Corrected typo here
         
             // Create a new part object with a unique ID
             var newPart = {
-                id: getNextId(), // Get next unique ID
+                id: getNextId(),
                 name: name,
                 quantity: quantity,
                 price: price,
-                scannerID: scannerID
+                scannerID: scannerID,
+                locationID: locationID // Corrected property reference here
             };
         
             // Add the new part to the parts list
@@ -277,14 +281,15 @@
             savePartsToLocalStorage();
         
             // Display success message
-            var confirmationMessage = "Part added successfully: Name: " + name + ", Quantity: " + quantity + ", Price: " + price + ", Scanner ID: " + scannerID;
+            var confirmationMessage = "Part added successfully: Name: " + name + ", Quantity: " + quantity + ", Price: " + price + ", Scanner ID: " + scannerID + ", Location ID: " + locationID;
             alert(confirmationMessage);
         
             // Clear input fields
             document.getElementById("addName").value = "";
             document.getElementById("addQuantity").value = "";
             document.getElementById("addPrice").value = "";
-            document.getElementById("addScannerID").value = ""; // Clear Scanner ID field
+            document.getElementById("addScannerID").value = "";
+            document.getElementById("addLocationID").value = ""; // Clear the corrected field
         }
         
         function removePart() {
@@ -307,21 +312,27 @@
             var id = parseInt(document.getElementById("updateId").value);
             var newQuantity = parseInt(document.getElementById("updateQuantity").value);
             var newPrice = parseFloat(document.getElementById("updatePrice").value);
+            var newLocationID = document.getElementById("updateLocationID").value;  // Fetch new location ID
+        
             // Find the part with the given ID
             var partToUpdate = partsList.find(function (part) {
                 return part.id === id;
             });
+        
             if (partToUpdate) {
-                // Update the part's quantity and price
+                // Update the part's quantity, price, and location ID
                 partToUpdate.quantity = newQuantity;
                 partToUpdate.price = newPrice;
+                partToUpdate.locationID = newLocationID;  // Update location ID
+        
                 // Save updated parts list to local storage
                 savePartsToLocalStorage();
-                alert("Part with ID " + id + " updated successfully.");
+        
+                alert("Part with ID " + id + " updated successfully: New Quantity: " + newQuantity + ", New Price: " + newPrice + ", New Location ID: " + newLocationID);
             } else {
                 alert("Part with ID " + id + " not found.");
             }
-        }
+        }        
         function searchPartByScannerID() {
             var scannerID = document.getElementById("searchScannerID").value;
             // Find the part with the provided Scanner ID
@@ -347,7 +358,7 @@
         }
 
         function displayAllParts() {
-            var table = "<table><tr><th>ID</th><th>Name</th><th>Quantity</th><th>Price</th><th>Scanner ID</th></tr>";
+            var table = "<table><tr><th>ID</th><th>Name</th><th>Quantity</th><th>Price</th><th>Scanner ID</th><th>Part Location</th></tr>";
             partsList.forEach(function (part) {
                 table += "<tr>";
                 table += "<td>" + part.id + "</td>";
@@ -355,6 +366,7 @@
                 table += "<td>" + part.quantity + "</td>";
                 table += "<td>" + part.price + "</td>";
                 table += "<td>" + part.scannerID + "</td>";
+                table += "<td>" + part.locationID + "</td>";
                 table += "</tr>";
             });
             table += "</table>";
