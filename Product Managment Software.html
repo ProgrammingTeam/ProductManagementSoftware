@@ -274,22 +274,18 @@
                 locationID: locationID // Corrected property reference here
             };
         
-            // Add the new part to the parts list
             partsList.push(newPart);
         
-            // Save parts list to local storage
             savePartsToLocalStorage();
         
-            // Display success message
             var confirmationMessage = "Part added successfully: Name: " + name + ", Quantity: " + quantity + ", Price: " + price + ", Scanner ID: " + scannerID + ", Location ID: " + locationID;
             alert(confirmationMessage);
         
-            // Clear input fields
             document.getElementById("addName").value = "";
             document.getElementById("addQuantity").value = "";
             document.getElementById("addPrice").value = "";
             document.getElementById("addScannerID").value = "";
-            document.getElementById("addLocationID").value = ""; // Clear the corrected field
+            document.getElementById("addLocationID").value = ""; 
         }
         
         function removePart() {
@@ -299,9 +295,7 @@
                 return part.id === id;
             });
             if (index !== -1) {
-                // Remove the part from the parts list
                 partsList.splice(index, 1);
-                // Save parts list to local storage
                 savePartsToLocalStorage();
                 alert("Part with ID " + id + " removed successfully.");
             } else {
@@ -314,18 +308,15 @@
             var newPrice = parseFloat(document.getElementById("updatePrice").value);
             var newLocationID = document.getElementById("updateLocationID").value;  // Fetch new location ID
         
-            // Find the part with the given ID
             var partToUpdate = partsList.find(function (part) {
                 return part.id === id;
             });
         
             if (partToUpdate) {
-                // Update the part's quantity, price, and location ID
                 partToUpdate.quantity = newQuantity;
                 partToUpdate.price = newPrice;
-                partToUpdate.locationID = newLocationID;  // Update location ID
+                partToUpdate.locationID = newLocationID;  
         
-                // Save updated parts list to local storage
                 savePartsToLocalStorage();
         
                 alert("Part with ID " + id + " updated successfully: New Quantity: " + newQuantity + ", New Price: " + newPrice + ", New Location ID: " + newLocationID);
@@ -335,9 +326,8 @@
         }        
         function searchPartByScannerID() {
             var scannerID = document.getElementById("searchScannerID").value;
-            // Find the part with the provided Scanner ID
             var foundPart = partsList.find(function (part) {
-                return part.scannerID == scannerID; // Remove toLowerCase() method
+                return part.scannerID == scannerID; 
             });
 
             if (foundPart) {
@@ -373,91 +363,77 @@
 
             document.getElementById("allParts").innerHTML = table;
 
-            // Scroll to the element with id "allParts"
             var allPartsElement = document.getElementById("allParts");
             allPartsElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        // Function to save parts list to local storage
         function savePartsToLocalStorage() {
             localStorage.setItem("partsList", JSON.stringify(partsList));
         }
 
-        // Function to open folder options/access
         function openFolderOptions() {
-            document.getElementById("main").style.display = "none"; // Hide main UI
-            document.getElementById("scannerTool").style.display = "none"; // Hide scanner tool UI
-            document.getElementById("folderOptions").style.display = "block"; // Show folder options/access UI
+            document.getElementById("main").style.display = "none"; 
+            document.getElementById("scannerTool").style.display = "none"; 
+            document.getElementById("folderOptions").style.display = "block"; 
         }
 
         // Function to open scanner tool
         function openScannerTool() {
-            document.getElementById("main").style.display = "none"; // Hide main UI
-            document.getElementById("folderOptions").style.display = "none"; // Hide folder options/access UI
-            document.getElementById("scannerTool").style.display = "block"; // Show scanner tool UI
+            document.getElementById("main").style.display = "none"; 
+            document.getElementById("folderOptions").style.display = "none"; 
+            document.getElementById("scannerTool").style.display = "block"; 
         }
 
-        // Function to go back to the main page
         function goBack() {
-            document.getElementById("main").style.display = "block"; // Show main UI
-            document.getElementById("folderOptions").style.display = "none"; // Hide folder options/access UI
-            document.getElementById("scannerTool").style.display = "none"; // Hide scanner tool UI
+            document.getElementById("main").style.display = "block"; 
+            document.getElementById("folderOptions").style.display = "none"; 
+            document.getElementById("scannerTool").style.display = "none"; 
         }
 
         function addPartFromScanner() {
             var name = document.getElementById("scannerName").value;
             var quantity = parseInt(document.getElementById("scannerQuantity").value);
             var price = parseFloat(document.getElementById("scannerPrice").value);
-            var scannerID = document.getElementById("scannerID").value; // Get scanner ID
-            var updateScannerID = document.getElementById("updateScannerID").value; // Get update scanner ID
+            var scannerID = document.getElementById("scannerID").value; 
+            var updateScannerID = document.getElementById("updateScannerID").value; 
 
-            // Check if the scanner ID is recognized
             var foundPart = partsList.find(function (part) {
                 return part.scannerID === scannerID;
             });
 
             if (foundPart) {
-                // Increase quantity by one if recognized
                 quantity += 1;
             } else {
-                // Automatically enter unrecognized scanner ID into the scanner ID field
                 document.getElementById("scannerID").value = updateScannerID;
             }
 
-            // Create a new part object
             var newPart = {
-                id: partsList.length + 1, // ID based on array length
+                id: partsList.length + 1, 
                 name: name,
                 quantity: quantity,
                 price: price,
                 scannerID: scannerID
             };
 
-            // Add the new part to the parts list
             partsList.push(newPart);
 
-            // Save parts list to local storage
             savePartsToLocalStorage();
 
-            // Automatically type update quantity in scanner ID field
             document.getElementById("scannerID").value = quantity;
 
-            // Display success message
             var confirmationMessage = "Part added successfully: Name: " + name + ", Quantity: " + quantity + ", Price: " + price + ", Scanner ID: " + scannerID;
             alert(confirmationMessage);
 
-            // Clear input fields
             document.getElementById("scannerName").value = "";
             document.getElementById("scannerQuantity").value = "";
             document.getElementById("scannerPrice").value = "";
-            document.getElementById("scannerID").value = ""; // Clear scanner ID field
-            document.getElementById("updateScannerID").value = ""; // Clear update scanner ID field
+            document.getElementById("scannerID").value = ""; 
+            document.getElementById("updateScannerID").value = ""; 
         }
 
         function updateQuantity() {
-            var scannerID = document.getElementById("updateScannerID").value; // Get scanner ID
+            var scannerID = document.getElementById("updateScannerID").value; 
 
-            // Find the part with the provided Scanner ID
             var foundPartIndex = partsList.findIndex(function (part) {
                 return part.scannerID == scannerID;
             });
